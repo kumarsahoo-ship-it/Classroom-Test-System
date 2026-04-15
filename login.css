@@ -1,0 +1,44 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(to top right, red ,blue)
+}
+
+.logbox{
+    background-color: aliceblue;
+    padding: 30px ;
+    width: 300px;
+    border-radius: 20px;
+    box-shadow: 0 0 100px;
+    text-align: center;
+
+}
+
+.logbox h2 {
+    margin-bottom: 15px;
+}
+.logbox input {
+    width: 100%;
+    padding: 4px;
+    margin: 5px;
+    border-radius: 10px;
+
+}
+.logbox button {
+    padding: 3px;
+    border-radius: 20px;
+    margin: 2px;
+    width: 25%;
+    background-color: rgb(63, 202, 241);
+    font-size: 15px;
+   
+}

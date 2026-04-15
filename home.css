@@ -1,0 +1,32 @@
+body {
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    height: 100vh;
+    background: linear-gradient(to top right, red ,blue)
+
+}
+.navbar{
+    background-color: rgb(255, 249, 249);
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    border-style: solid;
+    border-top: 0cap;
+    border-left: 0cap;
+    border-right: 0cap;
+}
+
+.navbar a{
+    padding:5px;
+}
+
+.logo{
+    text-align:left;
+    font-size: larger;
+    font-weight:bold;
+    
+
+}
+
+
