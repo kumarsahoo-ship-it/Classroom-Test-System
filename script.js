@@ -27,9 +27,9 @@ document.getElementById("signupForm").addEventListener("submit", function(event)
     });
 });
 
-// LOGIN FUNCTION
+// LOGIN
 document.getElementById("loginForm")?.addEventListener("submit", function(event) {
-    event.preventDefault();
+    event.preventDefault(); // stop refresh
 
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
@@ -43,14 +43,17 @@ document.getElementById("loginForm")?.addEventListener("submit", function(event)
     })
     .then(res => res.text())
     .then(data => {
+        console.log("Login response:", data);
+
         if (data === "Login successful") {
-            // ✅ Save login session
+            // ✅ save user
             localStorage.setItem("user", username);
 
-            // ✅ Redirect
+            // ✅ redirect
             window.location.href = "dashboard.html";
         } else {
-            alert("Invalid credentials");
+            alert("Invalid username or password");
         }
-    });
+    })
+    .catch(err => console.log(err));
 });
