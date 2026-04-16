@@ -5,7 +5,7 @@ const app = express();
 app.use(express.json());
 
 // ✅ MongoDB connection (use env variable)
-mongoose.connect(process.env.MONGO_URL)
+mongoose.connect(process.env.mongodb+srv://spiderman1raja1_db_user:DfNyREQGVHoWR6TU@cluster0.aocoknd.mongodb.net/testsystem?retryWrites=true&w=majority)
 .then(() => console.log("DB Connected"))
 .catch(err => console.log(err));
 
