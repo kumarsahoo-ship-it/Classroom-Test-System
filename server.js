@@ -36,19 +36,18 @@ app.get("/test", (req, res) => {
   res.send("API working");
 });
 
-app.post("/signup", (req, res) => {
+app.post("/signup", async (req, res) => {
   const { username, password } = req.body;
 
-  users.push({ username, password });
+  const newUser = new User({ username, password });
+  await newUser.save();
+
   res.send("User registered");
 });
-
-app.post("/login", (req, res) => {
+app.post("/login", async (req, res) => {
   const { username, password } = req.body;
 
-  const user = users.find(
-    u => u.username === username && u.password === password
-  );
+  const user = await User.findOne({ username, password });
 
   if (user) {
     res.send("Login successful");
