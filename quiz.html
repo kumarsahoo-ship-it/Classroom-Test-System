@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quiz</title>
+</head>
+<body>
+
+<h2>Quiz Test</h2>
+
+<h3 id="timer">Time: 30</h3>
+
+<div id="quiz"></div>
+
+<button onclick="submitQuiz()">Submit</button>
+
+<script>
+let time = 30;
+let questions = [];
+
+fetch("https://classroom-test-system.onrender.com/get-questions")
+.then(res => res.json())
+.then(data => {
+    questions = data;
+    loadQuiz();
+});
+
+function loadQuiz() {
+    const box = document.getElementById("quiz");
+
+    questions.forEach((q, i) => {
+        box.innerHTML += `
+            <div>
+                <p>${q.question}</p>
+                ${q.options.map(opt =>
+                    `<label><input type="radio" name="q${i}" value="${opt}">${opt}</label><br>`
+                ).join("")}
+            </div><hr>
+        `;
+    });
+}
+
+// TIMER
+const timer = setInterval(() => {
+    time--;
+    document.getElementById("timer").innerText = "Time: " + time;
+
+    if (time === 0) {
+        clearInterval(timer);
+        submitQuiz(); // auto submit
+    }
+}, 1000);
+
+// SUBMIT + RESULT
+function submitQuiz() {
+    clearInterval(timer);
+
+    let score = 0;
+
+    questions.forEach((q, i) => {
+        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+
+        if (selected && selected.value === q.answer) {
+            score++;
+        }
+    });
+
+    alert("Your Score: " + score + "/" + questions.length);
+}
+</script>
+
+</body>
+</html>
