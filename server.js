@@ -68,3 +68,28 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
 });
+
+const QuestionSchema = new mongoose.Schema({
+  question: String,
+  options: Array,
+  answer: String
+});
+
+const Question = mongoose.model("Question", QuestionSchema);
+
+// ADD QUESTION
+app.post("/add-question", async (req, res) => {
+  try {
+    const q = new Question(req.body);
+    await q.save();
+    res.send("Question saved");
+  } catch (err) {
+    res.send("Error saving question");
+  }
+});
+
+// GET QUESTIONS
+app.get("/get-questions", async (req, res) => {
+  const questions = await Question.find();
+  res.json(questions);
+});
