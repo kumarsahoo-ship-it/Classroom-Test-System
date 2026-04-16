@@ -14,6 +14,14 @@ mongoose.connect(process.env.MONGO_URL, {
 .then(() => console.log("DB Connected"))
 .catch(err => console.log("DB Error:", err));
 
+mongoose.connection.on("error", err => {
+    console.log("MongoDB error:", err);
+});
+
+mongoose.connection.once("open", () => {
+    console.log("MongoDB connected successfully");
+});
+
 // ✅ User Schema
 const UserSchema = new mongoose.Schema({
   username: String,
