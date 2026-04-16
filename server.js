@@ -46,16 +46,20 @@ app.post("/signup", async (req, res) => {
   res.send("User registered");
 });
 
-// ✅ Login
 app.post("/login", async (req, res) => {
-  const { username, password } = req.body;
+  try {
+    const { username, password } = req.body;
 
-  const user = await User.findOne({ username, password });
+    const user = await User.findOne({ username, password });
 
-  if (user) {
-    res.send("Login successful");
-  } else {
-    res.send("Invalid credentials");
+    if (user) {
+      res.send("Login successful");
+    } else {
+      res.send("Invalid credentials");
+    }
+  } catch (err) {
+    console.log(err);
+    res.send("Error");
   }
 });
 
