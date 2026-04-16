@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 
 const app = express();
 app.use(express.json());
+const cors = require("cors");
+app.use(cors());
 
 // ✅ MongoDB connection (use env variable)
 mongoose.connect(process.env.MONGO_URL)
