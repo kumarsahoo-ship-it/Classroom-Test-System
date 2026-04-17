@@ -118,3 +118,11 @@ app.get("/results/:username", async (req, res) => {
   const data = await Result.find({ username: req.params.username });
   res.json(data);
 });
+
+const QuestionSchema = new mongoose.Schema({
+  testName: String,
+  question: String,
+  options: Array,
+  answer: String,
+  time: Number   // ⏱️ time in seconds
+});
