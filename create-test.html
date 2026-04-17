@@ -7,7 +7,36 @@
 
 <h2>Create Test Question</h2>
 
-<input type="text" id="question" placeholder="Enter Question"><br><br>
+<input type="text" id="question" place<h2>Create Test</h2>
+
+<input id="testName" placeholder="Test Name"><br><br>
+<input id="question" placeholder="Question"><br><br>
+
+<input id="opt1" placeholder="Option 1"><br>
+<input id="opt2" placeholder="Option 2"><br>
+<input id="opt3" placeholder="Option 3"><br>
+<input id="opt4" placeholder="Option 4"><br><br>
+
+<input id="answer" placeholder="Correct Answer"><br><br>
+
+<button onclick="save()">Save</button>
+
+<script>
+function save() {
+  fetch("https://classroom-test-system.onrender.com/add-question", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({
+      testName: testName.value,
+      question: question.value,
+      options: [opt1.value, opt2.value, opt3.value, opt4.value],
+      answer: answer.value
+    })
+  })
+  .then(res=>res.text())
+  .then(msg=>alert(msg));
+}
+</script>holder="Enter Question"><br><br>
 
 <input type="text" id="opt1" placeholder="Option 1"><br><br>
 <input type="text" id="opt2" placeholder="Option 2"><br><br>
