@@ -69,27 +69,52 @@ app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
 });
 
+// ================= QUESTION MODEL =================
 const QuestionSchema = new mongoose.Schema({
+  testName: String,
   question: String,
   options: Array,
   answer: String
 });
-
 const Question = mongoose.model("Question", QuestionSchema);
 
-// ADD QUESTION
+// ================= RESULT MODEL =================
+const ResultSchema = new mongoose.Schema({
+  username: String,
+  testName: String,
+  score: Number,
+  total: Number
+});
+const Result = mongoose.model("Result", ResultSchema);
+
+// ================= ADD QUESTION =================
 app.post("/add-question", async (req, res) => {
-  try {
-    const q = new Question(req.body);
-    await q.save();
-    res.send("Question saved");
-  } catch (err) {
-    res.send("Error saving question");
-  }
+  const q = new Question(req.body);
+  await q.save();
+  res.send("Question saved");
 });
 
-// GET QUESTIONS
-app.get("/get-questions", async (req, res) => {
-  const questions = await Question.find();
-  res.json(questions);
+// ================= GET TEST LIST =================
+app.get("/tests", async (req, res) => {
+  const tests = await Question.distinct("testName");
+  res.json(tests);
+});
+
+// ================= GET QUESTIONS BY TEST =================
+app.get("/questions/:testName", async (req, res) => {
+  const data = await Question.find({ testName: req.params.testName });
+  res.json(data);
+});
+
+// ================= SAVE RESULT =================
+app.post("/result", async (req, res) => {
+  const r = new Result(req.body);
+  await r.save();
+  res.send("Result saved");
+});
+
+// ================= GET RESULTS =================
+app.get("/results/:username", async (req, res) => {
+  const data = await Result.find({ username: req.params.username });
+  res.json(data);
 });
