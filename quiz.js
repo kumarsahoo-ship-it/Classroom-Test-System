@@ -1,5 +1,4 @@
 let questions = [];
-let time = 60;
 
 const testName = localStorage.getItem("testName");
 document.getElementById("title").innerText = testName;
@@ -33,15 +32,19 @@ function loadQuiz() {
 }
 
 // TIMER
-const timer = setInterval(() => {
-    time--;
-    document.getElementById("timer").innerText = "Time: " + time;
+let time = 60;
 
-    if (time === 0) {
-        clearInterval(timer);
-        submitQuiz();
-    }
-}, 1000);
+// after fetching questions
+fetch(`https://classroom-test-system.onrender.com/questions/${testName}`)
+.then(res => res.json())
+.then(data => {
+    questions = data;
+
+    // ✅ take time from DB (first question)
+    time = data[0].time || 60;
+
+    loadQuiz();
+});
 
 // SUBMIT QUIZ
 function submitQuiz() {
