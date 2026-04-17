@@ -1,20 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Available Tests</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
 <h2>Available Tests</h2>
-<link rel="stylesheet" href="style.css">
 
 <div id="tests"></div>
 
 <script>
 fetch("https://classroom-test-system.onrender.com/tests")
-.then(res=>res.json())
-.then(data=>{
-  data.forEach(t=>{
-    document.getElementById("tests").innerHTML += 
-      `<p>${t} <button onclick="start('${t}')">Start</button></p>`;
-  });
+.then(res => res.json())
+.then(data => {
+    data.forEach(test => {
+        document.getElementById("tests").innerHTML += `
+            <div class="card">
+                <h3>${test}</h3>
+                <button onclick="startTest('${test}')">Start Test</button>
+            </div>
+        `;
+    });
 });
 
-function start(name){
-  localStorage.setItem("testName", name);
-  window.location.href = "quiz.html";
+function startTest(name) {
+    localStorage.setItem("testName", name);
+    window.location.href = "quiz.html"; // redirect
 }
 </script>
+
+</body>
+</html>
