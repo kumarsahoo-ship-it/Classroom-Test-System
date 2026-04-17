@@ -1,0 +1,17 @@
+<h2>Your Results</h2>
+
+<div id="res"></div>
+
+<script>
+const user = localStorage.getItem("user");
+
+fetch(`https://classroom-test-system.onrender.com/results/${user}`)
+.then(res=>res.json())
+.then(data=>{
+  data.forEach(r=>{
+    res.innerHTML += `
+      <p>${r.testName} → ${r.score}/${r.total}</p>
+    `;
+  });
+});
+</script>
