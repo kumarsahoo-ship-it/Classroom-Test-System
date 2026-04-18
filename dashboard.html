@@ -28,37 +28,24 @@ if (!user) {
         </ul>
     </div>
 
-    <!-- MAIN -->
+    <!-- MAIN CONTENT -->
     <div class="main">
 
         <h1>Welcome 👋 <span id="username"></span></h1>
 
-        <!-- CARDS -->
-        <div class="cards">
+        <!-- SELECT TEST -->
+        <h2>Select Test</h2>
+        <select id="testSelect"></select>
 
-            <div class="card">
-                <h3>Total Tests</h3>
-                <p id="totalTests">0</p>
-            </div>
+        <!-- LEADERBOARD -->
+        <h2>Leaderboard</h2>
 
-            <div class="card">
-                <h3>Available Tests</h3>
-                <p id="availableTests">0</p>
-            </div>
-
-            <div class="card">
-                <h3>Your Results</h3>
-                <p id="totalResults">0</p>
-            </div>
-
-        </div>
-
-        <!-- RECENT TESTS -->
-        <h2>Recent Tests</h2>
-
-        <table id="recentTests">
+        <table id="leaderboardTable">
             <tr>
-                <th>Test Name</th>
+                <th>Rank</th>
+                <th>Student</th>
+                <th>Score</th>
+                <th>Total</th>
             </tr>
         </table>
 
@@ -71,45 +58,87 @@ if (!user) {
 // 👤 Show username
 document.getElementById("username").innerText = user;
 
-// 🔄 NAVIGATION
+// 🔄 Navigation
 function go(page) {
     window.location.href = page + ".html";
 }
 
-// 🚪 LOGOUT
+// 🚪 Logout
 function logout() {
     localStorage.removeItem("user");
     window.location.href = "login.html";
 }
 
-// ================= LOAD DATA =================
-
-// TOTAL TESTS
+// ================= LOAD TEST LIST =================
 fetch("https://classroom-test-system.onrender.com/tests")
 .then(res => res.json())
-.then(data => {
+.then(tests => {
 
-    // Cards update
-    document.getElementById("totalTests").innerText = data.length;
-    document.getElementById("availableTests").innerText = data.length;
+    const select = document.getElementById("testSelect");
 
-    // Recent tests
-    data.slice(0,5).forEach(test => {
-        document.getElementById("recentTests").innerHTML += `
-            <tr>
-                <td>${test}</td>
-            </tr>
-        `;
+    if (tests.length === 0) {
+        select.innerHTML = "<option>No Tests Available</option>";
+        return;
+    }
+
+    tests.forEach(t => {
+        select.innerHTML += `<option value="${t}">${t}</option>`;
     });
 
+    // Load first test leaderboard
+    loadLeaderboard(tests[0]);
+
+    // Change test
+    select.addEventListener("change", function () {
+        loadLeaderboard(this.value);
+    });
 });
 
-// USER RESULTS
-fetch(`https://classroom-test-system.onrender.com/results/${user}`)
-.then(res => res.json())
-.then(data => {
-    document.getElementById("totalResults").innerText = data.length;
-});
+// ================= LOAD LEADERBOARD =================
+function loadLeaderboard(testName) {
+
+    fetch(`https://classroom-test-system.onrender.com/leaderboard/${testName}`)
+    .then(res => res.json())
+    .then(data => {
+
+        const table = document.getElementById("leaderboardTable");
+
+        // Reset table
+        table.innerHTML = `
+            <tr>
+                <th>Rank</th>
+                <th>Student</th>
+                <th>Score</th>
+                <th>Total</th>
+            </tr>
+        `;
+
+        if (data.length === 0) {
+            table.innerHTML += `
+                <tr>
+                    <td colspan="4">No results yet</td>
+                </tr>
+            `;
+            return;
+        }
+
+        data.forEach((r, index) => {
+            table.innerHTML += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${r.username}</td>
+                    <td>${r.score}</td>
+                    <td>${r.total}</td>
+                </tr>
+            `;
+        });
+
+    })
+    .catch(err => {
+        console.log(err);
+        alert("Error loading leaderboard");
+    });
+}
 
 </script>
 
