@@ -127,10 +127,17 @@ const QuestionSchema = new mongoose.Schema({
   time: Number   // ⏱️ time in seconds
 });
 
-// 🏆 LEADERBOARD (RANK-WISE)
+// ================= LEADERBOARD =================
 app.get("/leaderboard/:testName", async (req, res) => {
-  const data = await Result.find({ testName: req.params.testName })
-    .sort({ score: -1 }); // highest first
+  try {
+    const data = await Result.find({
+      testName: req.params.testName
+    }).sort({ score: -1 });
 
-  res.json(data);
+    res.json(data);
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Server error");
+  }
 });
