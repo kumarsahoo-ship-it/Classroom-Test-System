@@ -143,3 +143,44 @@ button:hover {
     margin-bottom: 10px;
     border-radius: 5px;
 }
+
+/* TIMER DESIGN */
+.timer-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.time-input {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.time-input input {
+    width: 70px;
+    height: 60px;
+    font-size: 22px;
+    text-align: center;
+    border-radius: 10px;
+    border: 2px solid #ddd;
+    outline: none;
+    transition: 0.3s;
+}
+
+.time-input input:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 5px #4CAF50;
+}
+
+.time-input label {
+    margin-top: 5px;
+    font-size: 12px;
+    color: #555;
+}
+
+.timer-box span {
+    font-size: 28px;
+    font-weight: bold;
+}
