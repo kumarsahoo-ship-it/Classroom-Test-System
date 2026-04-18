@@ -1,109 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-<!-- 🔐 Protect Dashboard -->
-<script>
-const user = localStorage.getItem("user");
-if (!user) {
-    window.location.href = "login.html";
-}
-</script>
-
-<div class="container">
-
-    <!-- SIDEBAR -->
-    <div class="sidebar">
-        <h2>Quiz System</h2>
-        <ul>
-            <li onclick="go('dashboard')" class="active">Dashboard</li>
-            <li onclick="go('create-test')">Create Test</li>
-            <li onclick="go('view-test')">View Test</li>
-            <li onclick="go('results')">Results</li>
-            <li onclick="logout()">Logout</li>
-        </ul>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div class="main">
-
-        <h1>Welcome 👋 <span id="username"></span></h1>
-
-        <!-- SELECT TEST -->
-        <h2>Select Test</h2>
-        <select id="testSelect"></select>
-
-        <!-- LEADERBOARD -->
-        <h2>Leaderboard</h2>
-
-        <table id="leaderboardTable">
-            <tr>
-                <th>Rank</th>
-                <th>Student</th>
-                <th>Score</th>
-                <th>Total</th>
-            </tr>
-        </table>
-
-    </div>
-</div>
-
-<!-- JS -->
-<script>
-
-// 👤 Show username
-document.getElementById("username").innerText = user;
-
-// 🔄 Navigation
-function go(page) {
-    window.location.href = page + ".html";
-}
-
-// 🚪 Logout
-function logout() {
-    localStorage.removeItem("user");
-    window.location.href = "login.html";
-}
-
-// ================= LOAD TEST LIST =================
-fetch("https://classroom-test-system.onrender.com/tests")
-.then(res => res.json())
-.then(tests => {
-
-    const select = document.getElementById("testSelect");
-
-    if (tests.length === 0) {
-        select.innerHTML = "<option>No Tests Available</option>";
-        return;
-    }
-
-    tests.forEach(t => {
-        select.innerHTML += `<option value="${t}">${t}</option>`;
-    });
-
-    // Load first test leaderboard
-    loadLeaderboard(tests[0]);
-
-    // Change test
-    select.addEventListener("change", function () {
-        loadLeaderboard(this.value);
-    });
-});
-
-// ================= LOAD LEADERBOARD =================
 function loadLeaderboard(testName) {
 
     fetch(`https://classroom-test-system.onrender.com/leaderboard/${testName}`)
-    .then(res => res.json())
+    .then(res => {
+        if (!res.ok) {
+            throw new Error("API not found");
+        }
+        return res.json();
+    })
     .then(data => {
 
         const table = document.getElementById("leaderboardTable");
 
-        // Reset table
         table.innerHTML = `
             <tr>
                 <th>Rank</th>
@@ -114,11 +21,7 @@ function loadLeaderboard(testName) {
         `;
 
         if (data.length === 0) {
-            table.innerHTML += `
-                <tr>
-                    <td colspan="4">No results yet</td>
-                </tr>
-            `;
+            table.innerHTML += `<tr><td colspan="4">No results yet</td></tr>`;
             return;
         }
 
@@ -135,12 +38,7 @@ function loadLeaderboard(testName) {
 
     })
     .catch(err => {
-        console.log(err);
-        alert("Error loading leaderboard");
+        console.log("Leaderboard error:", err);
+        alert("Leaderboard API not working");
     });
 }
-
-</script>
-
-</body>
-</html>
