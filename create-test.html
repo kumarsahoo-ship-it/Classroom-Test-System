@@ -10,11 +10,31 @@
 
 <input id="testName" placeholder="Test Name"><br><br>
 
-<h3>Set Timer</h3>
-<input id="hour" type="number" placeholder="HH" min="0"> :
-<input id="minute" type="number" placeholder="MM" min="0"> :
-<input id="second" type="number" placeholder="SS" min="0"><br><br>
+<!-- ⏱ TIMER -->
+<h3>⏱ Set Timer</h3>
 
+<div class="timer-box">
+    <div class="time-input">
+        <input id="hour" type="number" min="0" max="23" placeholder="00">
+        <label>Hours</label>
+    </div>
+
+    <span>:</span>
+
+    <div class="time-input">
+        <input id="minute" type="number" min="0" max="59" placeholder="00">
+        <label>Minutes</label>
+    </div>
+
+    <span>:</span>
+
+    <div class="time-input">
+        <input id="second" type="number" min="0" max="59" placeholder="00">
+        <label>Seconds</label>
+    </div>
+</div>
+
+<!-- QUESTIONS -->
 <div id="questions"></div>
 
 <button type="button" onclick="addQuestion()">➕ Add Question</button>
@@ -35,18 +55,18 @@ function addQuestion() {
     div.innerHTML = `
         <h3>Question ${count}</h3>
 
-        <input id="q${count}" placeholder="Enter question"><br>
+        <input id="q${count}" placeholder="Enter question"><br><br>
 
-        <input id="q${count}o1" placeholder="Option 1">
-        <input id="q${count}o2" placeholder="Option 2">
-        <input id="q${count}o3" placeholder="Option 3">
+        <input id="q${count}o1" placeholder="Option 1"><br>
+        <input id="q${count}o2" placeholder="Option 2"><br>
+        <input id="q${count}o3" placeholder="Option 3"><br>
         <input id="q${count}o4" placeholder="Option 4"><br><br>
 
-        <label>Select Correct Answer:</label><br>
+        <label><b>Select Correct Answer:</b></label><br>
 
-        <label><input type="radio" name="ans${count}" value="1"> Option 1</label>
-        <label><input type="radio" name="ans${count}" value="2"> Option 2</label>
-        <label><input type="radio" name="ans${count}" value="3"> Option 3</label>
+        <label><input type="radio" name="ans${count}" value="1"> Option 1</label><br>
+        <label><input type="radio" name="ans${count}" value="2"> Option 2</label><br>
+        <label><input type="radio" name="ans${count}" value="3"> Option 3</label><br>
         <label><input type="radio" name="ans${count}" value="4"> Option 4</label>
 
         <hr>
@@ -67,7 +87,7 @@ function submitTest() {
     const totalTime = h * 3600 + m * 60 + s;
 
     if (!testName || totalTime <= 0) {
-        alert("Enter test name and valid time");
+        alert("Enter test name and valid timer");
         return;
     }
 
@@ -91,7 +111,7 @@ function submitTest() {
 
         const answer = options[selected.value - 1];
 
-        // ✅ SEND TO SERVER
+        // SEND TO BACKEND
         fetch("https://classroom-test-system.onrender.com/add-question", {
             method: "POST",
             headers: {
@@ -111,9 +131,17 @@ function submitTest() {
     }
 
     alert("Test Created Successfully 🎉");
-
     window.location.href = "dashboard.html";
 }
+
+// ================= TIMER INPUT LIMIT =================
+document.querySelectorAll(".time-input input").forEach(input => {
+    input.addEventListener("input", () => {
+        if (input.value.length > 2) {
+            input.value = input.value.slice(0, 2);
+        }
+    });
+});
 
 </script>
 
