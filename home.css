@@ -7,7 +7,7 @@ body {
 /* HERO */
 .hero {
     height: 100vh;
-    background: linear-gradient(135deg, #4CAF50, #2ecc71);
+    background: transparent;
     color: white;
     text-align: center;
     display: flex;
