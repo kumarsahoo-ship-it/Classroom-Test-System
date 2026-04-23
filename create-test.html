@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Create Test</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -18,15 +19,27 @@
         <label>Hours</label>
     </div>
 
-   <br>
+    <span>:</span>
 
-<hr>
+    <div class="time-input">
+        <input id="minute" type="number" min="0" max="59" placeholder="00">
+        <label>Minutes</label>
+    </div>
 
+    <span>:</span>
+
+    <div class="time-input">
+        <input id="second" type="number" min="0" max="59" placeholder="00">
+        <label>Seconds</label>
+    </div>
+</div>
+
+<!-- QUESTIONS -->
 <div id="questions"></div>
 
-<button type="button" onclick="addQuestion()">Add Question</button>
+<button type="button" onclick="addQuestion()">➕ Add Question</button>
 <br><br>
-<button type="button" onclick="submitTest()">Submit Test</button>
+<button type="button" onclick="submitTest()">✅ Submit Test</button>
 
 <script>
 
@@ -37,21 +50,24 @@ function addQuestion() {
     count++;
 
     const div = document.createElement("div");
+    div.className = "card";
 
     div.innerHTML = `
-        <h3>Q${count}</h3>
+        <h3>Question ${count}</h3>
 
-        <input id="q${count}" placeholder="Question"><br>
+        <input id="q${count}" placeholder="Enter question"><br><br>
 
         <input id="q${count}o1" placeholder="Option 1"><br>
         <input id="q${count}o2" placeholder="Option 2"><br>
         <input id="q${count}o3" placeholder="Option 3"><br>
-        <input id="q${count}o4" placeholder="Option 4"><br>
+        <input id="q${count}o4" placeholder="Option 4"><br><br>
 
-        <label><input type="radio" name="ans${count}" value="1">1</label>
-        <label><input type="radio" name="ans${count}" value="2">2</label>
-        <label><input type="radio" name="ans${count}" value="3">3</label>
-        <label><input type="radio" name="ans${count}" value="4">4</label>
+        <label><b>Select Correct Answer:</b></label><br>
+
+        <label><input type="radio" name="ans${count}" value="1"> Option 1</label><br>
+        <label><input type="radio" name="ans${count}" value="2"> Option 2</label><br>
+        <label><input type="radio" name="ans${count}" value="3"> Option 3</label><br>
+        <label><input type="radio" name="ans${count}" value="4"> Option 4</label>
 
         <hr>
     `;
@@ -59,27 +75,25 @@ function addQuestion() {
     document.getElementById("questions").appendChild(div);
 }
 
-// ================= SUBMIT =================
+// ================= SUBMIT TEST =================
 function submitTest() {
 
     const testName = document.getElementById("testName").value.trim();
 
-    const h = parseInt(hour.value) || 0;
-    const m = parseInt(minute.value) || 0;
-    const s = parseInt(second.value) || 0;
+    const h = parseInt(document.getElementById("hour").value) || 0;
+    const m = parseInt(document.getElementById("minute").value) || 0;
+    const s = parseInt(document.getElementById("second").value) || 0;
 
-    const totalTime = h*3600 + m*60 + s;
+    const totalTime = h * 3600 + m * 60 + s;
 
     if (!testName || totalTime <= 0) {
-        alert("Enter test name & timer");
+        alert("Enter test name and valid timer");
         return;
     }
 
-    let questions = [];
+    for (let i = 1; i <= count; i++) {
 
-    for (let i=1;i<=count;i++) {
-
-        const q = document.getElementById(`q${i}`).value;
+        const question = document.getElementById(`q${i}`).value;
 
         const options = [
             document.getElementById(`q${i}o1`).value,
@@ -90,43 +104,44 @@ function submitTest() {
 
         const selected = document.querySelector(`input[name="ans${i}"]:checked`);
 
-        if (!q || options.includes("") || !selected) {
-            alert("Complete all questions");
+        if (!question || options.includes("") || !selected) {
+            alert("Fill all fields for Question " + i);
             return;
         }
 
-        questions.push({
-            question: q,
-            options,
-            answer: options[selected.value-1]
-        });
+        const answer = options[selected.value - 1];
+
+        // SEND TO BACKEND
+        fetch("https://classroom-test-system.onrender.com/add-question", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                testName,
+                question,
+                options,
+                answer,
+                time: totalTime
+            })
+        })
+        .then(res => res.text())
+        .then(data => console.log(data))
+        .catch(err => console.log(err));
     }
 
-    // ✅ ONE CALL ONLY
-    fetch("https://classroom-test-system.onrender.com/add-questions", {
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify({
-            testName,
-            questions,
-            time: totalTime
-        })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.message === "Test already exists") {
-            alert("Test name already exists");
-            return;
-        }
-
-        alert("Test Created");
-        window.location.href = "dashboard.html";
-    })
-    .catch(err => console.log(err));
+    alert("Test Created Successfully 🎉");
+    window.location.href = "dashboard.html";
 }
 
-// start with one question
-addQuestion();
+// ================= TIMER INPUT LIMIT =================
+document.querySelectorAll(".time-input input").forEach(input => {
+    input.addEventListener("input", () => {
+        if (input.value.length > 2) {
+            input.value = input.value.slice(0, 2);
+        }
+    });
+});
 
 </script>
 
