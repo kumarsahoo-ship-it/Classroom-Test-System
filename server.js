@@ -89,24 +89,55 @@ app.post("/login", async (req, res) => {
 
 
 // ================= CREATE TEST =================
-app.post("/add-question", async (req, res) => {
+app.post("/add-questions", async (req, res) => {
   try {
-    const { testName, question, options, answer, time } = req.body;
+    const { testName, questions, time } = req.body;
 
-    const newQ = new Question({
+    // ❌ 1. Block duplicate test name
+    const exists = await Question.findOne({ testName });
+    if (exists) {
+      return res.status(400).json({
+        message: "Test name already exists. Use another name."
+      });
+    }
+
+    // ❌ 2. Prevent empty / partial data
+    if (!questions || questions.length === 0) {
+      return res.status(400).json({
+        message: "No questions provided"
+      });
+    }
+
+    // ❌ 3. Check all questions are complete
+    for (let q of questions) {
+      if (
+        !q.question ||
+        !q.options ||
+        q.options.includes("") ||
+        !q.answer
+      ) {
+        return res.status(400).json({
+          message: "Incomplete question detected"
+        });
+      }
+    }
+
+    // ✅ 4. Save full test (single insert)
+    const data = questions.map(q => ({
       testName,
-      question,
-      options,
-      answer,
+      question: q.question,
+      options: q.options,
+      answer: q.answer,
       time
-    });
+    }));
 
-    await newQ.save();
+    await Question.insertMany(data);
 
-    res.send("Question added");
+    res.json({ message: "Test created successfully" });
+
   } catch (err) {
     console.log(err);
-    res.status(500).send("Error adding question");
+    res.status(500).send("Server error");
   }
 });
 
