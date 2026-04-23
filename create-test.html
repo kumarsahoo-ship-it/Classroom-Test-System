@@ -127,10 +127,11 @@ function submitTest() {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            testName,
-            questions,
-            time: totalTime
-        })
+    testName,
+    questions,
+    time: totalTime,
+    createdBy: localStorage.getItem("user")   // 🔥 IMPORTANT
+})
     })
     .then(async res => {
         const data = await res.json();
